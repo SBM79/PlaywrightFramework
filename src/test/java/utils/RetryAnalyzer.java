@@ -7,23 +7,7 @@ import org.testng.ITestResult;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * RetryAnalyzer — TestNG retry mechanism for flaky test tolerance.
- *
- * <p>When a test fails, TestNG calls {@link #retry(ITestResult)}. If the method
- * returns {@code true}, TestNG re-runs the test immediately. The maximum number
- * of retries is read from {@link QAConfig#MAX_RETRY_COUNT} (default: 2).</p>
- *
- * <p>Usage — annotate each {@code @Test} method:
- * <pre>
- *   {@literal @}Test(retryAnalyzer = RetryAnalyzer.class)
- *   public void myFlakyTest() { ... }
- * </pre>
- * </p>
- *
- * <p>Thread-safe: a {@link ConcurrentHashMap} of {@link AtomicInteger} counters
- * ensures accurate retry tracking under parallel execution.</p>
- */
+
 public class RetryAnalyzer implements IRetryAnalyzer {
 
     /**
