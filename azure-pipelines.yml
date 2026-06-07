@@ -1,0 +1,160 @@
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║  azure-pipelines.yml                                                        ║
+# ║  SauceDemo Playwright Java Automation Framework — CI Pipeline               ║
+# ║                                                                             ║
+# ║  Placement : repository root (same level as pom.xml)                        ║
+# ║  Triggers  : every push to the 'main' branch                               ║
+# ║  Agent     : Microsoft-hosted Ubuntu Latest                                 ║
+# ║  Runtime   : ~5–8 minutes (includes Playwright browser download)            ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+
+# ─── Trigger ──────────────────────────────────────────────────────────────────
+# Runs automatically on every push to the 'main' branch.
+# Pull-request validation is also included so tests gate merges.
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - main
+
+# ─── Agent Pool ───────────────────────────────────────────────────────────────
+# Microsoft-hosted Ubuntu agent — pre-installed with Git, Maven, and system
+# libraries required by Chromium and Firefox.
+pool:
+  vmImage: 'ubuntu-latest'
+
+# ─── Variables ────────────────────────────────────────────────────────────────
+variables:
+  MAVEN_CACHE_FOLDER: $(HOME)/.m2/repository
+  JAVA_VERSION: '17'
+  PLAYWRIGHT_BROWSERS_PATH: $(Pipeline.Workspace)/pw-browsers
+
+# ─── Steps ────────────────────────────────────────────────────────────────────
+steps:
+
+  # ╭──────────────────────────────────────────────────────────────────────────╮
+  # │  STEP 1 — Install JDK 17                                                │
+  # ╰──────────────────────────────────────────────────────────────────────────╯
+  - task: JavaToolInstaller@0
+    displayName: '☕ Install JDK $(JAVA_VERSION)'
+    inputs:
+      versionSpec: '$(JAVA_VERSION)'
+      jdkArchitectureOption: 'x64'
+      jdkSourceOption: 'PreInstalled'
+
+  # ╭──────────────────────────────────────────────────────────────────────────╮
+  # │  STEP 2 — Cache Maven dependencies                                      │
+  # │  Speeds up subsequent builds by caching .m2/repository                   │
+  # ╰──────────────────────────────────────────────────────────────────────────╯
+  - task: Cache@2
+    displayName: '📦 Cache Maven dependencies'
+    inputs:
+      key: 'maven | "$(Agent.OS)" | pom.xml'
+      path: $(MAVEN_CACHE_FOLDER)
+      restoreKeys: |
+        maven | "$(Agent.OS)"
+
+  # ╭──────────────────────────────────────────────────────────────────────────╮
+  # │  STEP 3 — Compile the project (downloads Maven deps on first run)        │
+  # ╰──────────────────────────────────────────────────────────────────────────╯
+  - script: mvn compile -B -q
+    displayName: '🔨 Maven compile'
+    workingDirectory: $(System.DefaultWorkingDirectory)
+
+  # ╭──────────────────────────────────────────────────────────────────────────╮
+  # │  STEP 4 — Compile test sources                                           │
+  # ╰──────────────────────────────────────────────────────────────────────────╯
+  - script: mvn test-compile -B -q
+    displayName: '🔨 Maven test-compile'
+    workingDirectory: $(System.DefaultWorkingDirectory)
+
+  # ╭──────────────────────────────────────────────────────────────────────────╮
+  # │  STEP 5 — Install Playwright browsers (Chromium + Firefox)               │
+  # │  Downloads browser binaries to PLAYWRIGHT_BROWSERS_PATH so they can      │
+  # │  be cached between runs.                                                 │
+  # ╰──────────────────────────────────────────────────────────────────────────╯
+  - script: |
+      mvn exec:java -e \
+        -Dexec.mainClass=com.microsoft.playwright.CLI \
+        -Dexec.args="install --with-deps chromium firefox"
+    displayName: '🌐 Install Playwright browsers (Chromium + Firefox)'
+    workingDirectory: $(System.DefaultWorkingDirectory)
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: $(PLAYWRIGHT_BROWSERS_PATH)
+
+  # ╭──────────────────────────────────────────────────────────────────────────╮
+  # │  STEP 6 — Create output directories for screenshots and traces           │
+  # ╰──────────────────────────────────────────────────────────────────────────╯
+  - script: |
+      mkdir -p screenshots
+      mkdir -p traces
+      mkdir -p test-output
+    displayName: '📁 Create output directories'
+    workingDirectory: $(System.DefaultWorkingDirectory)
+
+  # ╭──────────────────────────────────────────────────────────────────────────╮
+  # │  STEP 7 — Run TestNG tests via Maven Surefire                            │
+  # │  continueOnError: true ensures subsequent steps (result publishing)      │
+  # │  still execute even when tests fail.                                     │
+  # ╰──────────────────────────────────────────────────────────────────────────╯
+  - script: mvn test -B
+    displayName: '▶️ Run Playwright tests'
+    workingDirectory: $(System.DefaultWorkingDirectory)
+    continueOnError: true
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: $(PLAYWRIGHT_BROWSERS_PATH)
+
+  # ╭──────────────────────────────────────────────────────────────────────────╮
+  # │  STEP 8 — Publish TestNG / Surefire XML results to Azure DevOps          │
+  # │  These appear under the "Tests" tab of the pipeline run.                 │
+  # ╰──────────────────────────────────────────────────────────────────────────╯
+  - task: PublishTestResults@2
+    displayName: '📊 Publish test results'
+    condition: always()
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: '**/target/surefire-reports/TEST-*.xml'
+      searchFolder: $(System.DefaultWorkingDirectory)
+      mergeTestResults: true
+      testRunTitle: 'SauceDemo Playwright Tests'
+      failTaskOnFailedTests: true
+
+  # ╭──────────────────────────────────────────────────────────────────────────╮
+  # │  STEP 9 — Publish TestNG HTML report as a pipeline artifact              │
+  # │  Downloadable from the "Artifacts" section of the pipeline run.          │
+  # ╰──────────────────────────────────────────────────────────────────────────╯
+  - task: PublishPipelineArtifact@1
+    displayName: '📄 Publish HTML test report'
+    condition: always()
+    inputs:
+      targetPath: $(System.DefaultWorkingDirectory)/test-output
+      artifact: 'TestNG-HTML-Report'
+      publishLocation: 'pipeline'
+
+  # ╭──────────────────────────────────────────────────────────────────────────╮
+  # │  STEP 10 — Publish failure screenshots as a pipeline artifact            │
+  # │  Only uploads if the screenshots directory contains files.               │
+  # ╰──────────────────────────────────────────────────────────────────────────╯
+  - task: PublishPipelineArtifact@1
+    displayName: '📸 Publish failure screenshots'
+    condition: always()
+    inputs:
+      targetPath: $(System.DefaultWorkingDirectory)/screenshots
+      artifact: 'Failure-Screenshots'
+      publishLocation: 'pipeline'
+
+  # ╭──────────────────────────────────────────────────────────────────────────╮
+  # │  STEP 11 — Publish Playwright traces as a pipeline artifact              │
+  # │  Download the .zip and open at https://trace.playwright.dev              │
+  # ╰──────────────────────────────────────────────────────────────────────────╯
+  - task: PublishPipelineArtifact@1
+    displayName: '🔍 Publish Playwright traces'
+    condition: always()
+    inputs:
+      targetPath: $(System.DefaultWorkingDirectory)/traces
+      artifact: 'Playwright-Traces'
+      publishLocation: 'pipeline'

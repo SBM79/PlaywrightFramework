@@ -1,0 +1,24 @@
+# ─── Maven build output ──────────────────────────────────────────────────────
+target/
+
+# ─── IDE files ───────────────────────────────────────────────────────────────
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+*.swp
+*.swo
+.vscode/
+
+# ─── Test output (generated at runtime) ──────────────────────────────────────
+test-output/
+screenshots/
+traces/
+
+# ─── Playwright browser binaries (downloaded at runtime) ─────────────────────
+pw-browsers/
+
+# ─── OS junk ─────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db

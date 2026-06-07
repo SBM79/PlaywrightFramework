@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="SauceDemo Playwright Automation Suite"
+       parallel="tests"
+       thread-count="4"
+       verbose="2">
+
+    <listeners>
+        <!-- Built-in TestNG HTML reporter → test-output/index.html -->
+        <!-- <listener class-name="org.testng.reporters.HTMLReporter"/> -->
+        <!-- Built-in JUnit XML (for CI system integration) -->
+        <listener class-name="org.testng.reporters.JUnitReportReporter"/>
+    </listeners>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         CHROMIUM — Authentication Tests
+         ═══════════════════════════════════════════════════════════════════ -->
+    <test name="Login Tests — Chromium" preserve-order="true">
+        <parameter name="browser" value="chromium"/>
+        <classes>
+            <class name="tests.LoginTest">
+                <methods>
+                    <include name="testSuccessfulLogin"/>
+                    <include name="testFailedLogin"/>
+                    <include name="testLogout"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         FIREFOX — Authentication Tests
+         ═══════════════════════════════════════════════════════════════════ -->
+    <test name="Login Tests — Firefox" preserve-order="true">
+        <parameter name="browser" value="firefox"/>
+        <classes>
+            <class name="tests.LoginTest">
+                <methods>
+                    <include name="testSuccessfulLogin"/>
+                    <include name="testFailedLogin"/>
+                    <include name="testLogout"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         CHROMIUM — End-to-End Purchase Tests
+         ═══════════════════════════════════════════════════════════════════ -->
+    <test name="Buy Product Tests — Chromium" preserve-order="true">
+        <parameter name="browser" value="chromium"/>
+        <classes>
+            <class name="tests.BuyProductTest">
+                <methods>
+                    <include name="testCompleteProductPurchase"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         FIREFOX — End-to-End Purchase Tests
+         ═══════════════════════════════════════════════════════════════════ -->
+    <test name="Buy Product Tests — Firefox" preserve-order="true">
+        <parameter name="browser" value="firefox"/>
+        <classes>
+            <class name="tests.BuyProductTest">
+                <methods>
+                    <include name="testCompleteProductPurchase"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+</suite>
