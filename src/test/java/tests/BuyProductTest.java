@@ -22,7 +22,7 @@ public class BuyProductTest extends BaseTest {
     private static final String ZIP_CODE   = "94105";
     private static final String EXPECTED_CONFIRMATION = "Thank you for your order";
 
-    // ─── Page Objects ─────────────────────────────────────────────────────────
+    // ─── Create Objects of Page classes ─────────────────────────────────────────────────────────
     private LoginPage     loginPage;
     private InventoryPage inventoryPage;
     private CartPage      cartPage;
