@@ -4,9 +4,9 @@ name: Playwright Tests
 # ─── Triggers ─────────────────────────────────────────────────────────────────
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 # ─── Jobs ─────────────────────────────────────────────────────────────────────
 jobs:
