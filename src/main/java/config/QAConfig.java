@@ -25,14 +25,10 @@ public final class QAConfig {
 
     // ─── Retry Configuration ──────────────────────────────────────────────────
 
-    /**
-     * Maximum number of times a failed test will be retried.
-     */
     public static final int MAX_RETRY_COUNT = 2;
 
     // ─── Output Paths ─────────────────────────────────────────────────────────
 
-    /** Directory where screenshots of failures are saved. */
     public static final String SCREENSHOTS_DIR = "screenshots";
 
     /** Directory where Playwright traces (zip) of failures are saved. */
