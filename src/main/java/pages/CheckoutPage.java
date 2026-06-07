@@ -33,7 +33,6 @@ public class CheckoutPage {
 
     // ─── Public Actions ──────────────────────────────────────────────────────
 
-
     public void fillCustomerInformation(String firstName, String lastName, String zipCode) {
         firstNameInput.fill(firstName);
         lastNameInput.fill(lastName);
@@ -46,7 +45,6 @@ public class CheckoutPage {
     }
 
     public String getOrderConfirmationMessage() {
-        //confirmationHeader.waitFor();
         return page.locator(confirmationHeader).textContent().trim();
     }
 

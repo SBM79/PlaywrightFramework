@@ -10,28 +10,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class RetryAnalyzer implements IRetryAnalyzer {
 
-    /**
-     * Maximum number of additional attempts beyond the first run.
-     * Sourced from {@link QAConfig#MAX_RETRY_COUNT} so it never needs to be
-     * changed here.
-     */
     private static final int MAX_RETRY = QAConfig.MAX_RETRY_COUNT;
 
-    /**
-     * Per-test retry counter map.
-     * Key: {@code "ClassName#methodName"} to uniquely identify each test case
-     * across parallel threads.
-     */
     private final ConcurrentHashMap<String, AtomicInteger> retryMap =
             new ConcurrentHashMap<>();
 
-    /**
-     * Determine whether a failed test should be retried.
-     *
-     * @param result the result of the test that just failed
-     * @return {@code true}  — re-run the test (retry attempt consumed)
-     *         {@code false} — mark the test as failed, do not retry again
-     */
     @Override
     public boolean retry(ITestResult result) {
         // Build a unique key per test method

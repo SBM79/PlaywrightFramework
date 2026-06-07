@@ -29,10 +29,7 @@ public class InventoryPage {
         this.menuButton  = page.locator("#react-burger-menu-btn");
         this.logoutLink  = page.locator("#logout_sidebar_link");
 
-        // Relative XPath using data-test attribute
-       // this.cartBadge     = page.locator("//span[@data-test='shopping-cart-badge']");
-       // this.inventoryList = page.locator("//div[@data-test='inventory-list']");
-    }
+        }
 
     // ─── Public Actions ──────────────────────────────────────────────────────
 
@@ -73,8 +70,6 @@ public class InventoryPage {
 
     public void logout() {
         menuButton.click();
-        // Wait for the sidebar animation to complete and the link to be visible
-        logoutLink.waitFor();
         logoutLink.click();
     }
 
