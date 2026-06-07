@@ -19,7 +19,7 @@ public final class QAConfig {
     // ─── Browser Configuration ────────────────────────────────────────────────
 
 
-    public static final boolean HEADLESS = false;
+    public static final boolean HEADLESS = true;
     public static final int VIEWPORT_WIDTH = 1280;
     public static final int VIEWPORT_HEIGHT = 720;
 
