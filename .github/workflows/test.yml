@@ -1,18 +1,27 @@
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║  .github/workflows/test.yml                                                ║
+# ║  SauceDemo Playwright Java Automation Framework — GitHub Actions CI         ║
+# ║                                                                             ║
+# ║  Placement : .github/workflows/test.yml  (GitHub auto-detects this path)    ║
+# ║  Triggers  : push to main  |  pull request to main                         ║
+# ║  Runner    : ubuntu-latest (GitHub-hosted)                                  ║
+# ║  Runtime   : ~4–6 minutes (browser download + test execution)               ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
 
 name: Playwright Tests
 
 # ─── Triggers ─────────────────────────────────────────────────────────────────
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 # ─── Jobs ─────────────────────────────────────────────────────────────────────
 jobs:
   test:
     name: Run Playwright Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
 
