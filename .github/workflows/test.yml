@@ -68,22 +68,22 @@ jobs:
       - name: Run Playwright tests
         run: mvn test -B
         continue-on-error: true
+#
+#      # ────────────────────────────────────────────────────────────────────────
+#      # STEP 7 — Publish test results to the GitHub Actions "Summary" tab
+#      #   Parses Surefire XML reports and renders pass/fail counts + details
+#      #   directly in the workflow run summary and as PR check annotations.
+#      # ────────────────────────────────────────────────────────────────────────
+#      - name: Publish test results
+#        uses: dorny/test-reporter@v1
+#        if: always()
+#        with:
+#          name: TestNG Results
+#          path: target/surefire-reports/TEST-*.xml
+#          reporter: java-junit
 
       # ────────────────────────────────────────────────────────────────────────
-      # STEP 7 — Publish test results to the GitHub Actions "Summary" tab
-      #   Parses Surefire XML reports and renders pass/fail counts + details
-      #   directly in the workflow run summary and as PR check annotations.
-      # ────────────────────────────────────────────────────────────────────────
-      - name: Publish test results
-        uses: dorny/test-reporter@v1
-        if: always()
-        with:
-          name: TestNG Results
-          path: target/surefire-reports/TEST-*.xml
-          reporter: java-junit
-
-      # ────────────────────────────────────────────────────────────────────────
-      # STEP 8 — Upload TestNG HTML report as a downloadable artifact
+      # STEP 7 — Upload TestNG HTML report as a downloadable artifact
       # ────────────────────────────────────────────────────────────────────────
       - name: Upload HTML test report
         uses: actions/upload-artifact@v4
@@ -94,7 +94,7 @@ jobs:
           retention-days: 30
 
       # ────────────────────────────────────────────────────────────────────────
-      # STEP 9 — Upload failure screenshots
+      # STEP 8 — Upload failure screenshots
       # ────────────────────────────────────────────────────────────────────────
       - name: Upload failure screenshots
         uses: actions/upload-artifact@v4
@@ -106,7 +106,7 @@ jobs:
           if-no-files-found: ignore
 
       # ────────────────────────────────────────────────────────────────────────
-      # STEP 10 — Upload Playwright traces
+      # STEP 9 — Upload Playwright traces
       #   Download the .zip and open at https://trace.playwright.dev
       # ────────────────────────────────────────────────────────────────────────
       - name: Upload Playwright traces
