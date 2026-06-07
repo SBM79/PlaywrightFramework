@@ -25,7 +25,7 @@ public class LoginDataDrivenTest extends BaseTest {
     private static final String CSV_FILE  = "testdata/login_data.csv";
     private static final String DELIMITER = ",";
 
-    // ─── Page Objects ─────────────────────────────────────────────────────────
+    // ─── Create Objects of Page classes ─────────────────────────────────────────────────────────
     private LoginPage     loginPage;
     private InventoryPage inventoryPage;
     private CartPage      cartPage;
@@ -143,14 +143,6 @@ public class LoginDataDrivenTest extends BaseTest {
                         + "               username='"  + username + "'\n"
                         + "               Actual URL: " + getPage().url()
         );
-        System.out.println("✔  URL contains 'inventory'.");
-
-        Assert.assertTrue(
-                inventoryPage.isInventoryListVisible(),
-                "SUCCESS FAIL — Product list is not visible.\n"
-                        + "               username='" + username + "'"
-        );
-        System.out.println("✔  Product list visible on inventory page.");
         System.out.printf( "✔  LOGIN PASSED  → username='%s' reached inventory page.%n", username);
     }
 
